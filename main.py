@@ -1,12 +1,14 @@
 import os
 import asyncio
 
-from livekit.agents import JobContext, WorkerOptions, cli, JobProcess
-from livekit.agents.llm import (
-    ChatContext,
-    ChatMessage,
+from livekit.agents import (
+    JobContext,
+    WorkerOptions,
+    cli,
+    JobProcess,
+    AgentSession,
+    Agent,
 )
-from livekit.agents.voice_assistant import VoiceAssistant
 from livekit.plugins import deepgram, silero, cartesia, openai
 
 from dotenv import load_dotenv
@@ -19,31 +21,25 @@ def prewarm(proc: JobProcess):
 
 
 async def entrypoint(ctx: JobContext):
-    initial_ctx = ChatContext(
-        messages=[
-            ChatMessage(
-                role="system",
-                content="You are a voice assistant. Pretend we're having a human conversation, no special formatting or headings, just natural speech.",
-            )
-        ]
-    )
-
-    assistant = VoiceAssistant(
+    session = AgentSession(
         vad=ctx.proc.userdata["vad"],
-        stt=deepgram.STT(),
+        stt=deepgram.STT(model="nova-3", language="multi"),
         llm=openai.LLM(
             base_url="https://api.cerebras.ai/v1",
             api_key=os.environ.get("CEREBRAS_API_KEY"),
             model="llama3.1-8b",
         ),
-        tts=cartesia.TTS(voice="248be419-c632-4f23-adf1-5324ed7dbf1d"),
-        chat_ctx=initial_ctx,
+        tts=cartesia.TTS(voice="79693aee-1207-4771-a01e-20c393c89e6f", language="it"),
+    )
+
+    agent = Agent(
+        instructions="Sei un assistente vocale. Comportati come se stessimo avendo una conversazione umana, senza formattazione speciale o intestazioni, solo linguaggio naturale. Rispondi sempre in italiano."
     )
 
     await ctx.connect()
-    assistant.start(ctx.room)
+    await session.start(room=ctx.room, agent=agent)
     await asyncio.sleep(1)
-    await assistant.say("Hi there, how are you doing today?", allow_interruptions=True)
+    await session.say("Ciao, come posso aiutarti oggi?", allow_interruptions=True)
 
 
 if __name__ == "__main__":
