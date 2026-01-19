@@ -10,6 +10,7 @@ from livekit.agents import (
     Agent,
 )
 from livekit.plugins import deepgram, silero, cartesia, openai
+from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 from dotenv import load_dotenv
 
@@ -23,6 +24,7 @@ def prewarm(proc: JobProcess):
 async def entrypoint(ctx: JobContext):
     session = AgentSession(
         vad=ctx.proc.userdata["vad"],
+        turn_detection=MultilingualModel(),
         stt=deepgram.STT(model="nova-3", language="multi"),
         llm=openai.LLM(
             base_url="https://api.cerebras.ai/v1",
