@@ -8,7 +8,7 @@ import { cn } from '@/lib/shadcn/utils';
 
 export interface AgentDisconnectButtonProps
   extends React.ComponentProps<'button'>,
-  VariantProps<typeof buttonVariants> {
+    VariantProps<typeof buttonVariants> {
   icon?: React.ReactNode;
   children?: React.ReactNode;
 }

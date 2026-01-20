@@ -139,8 +139,8 @@ export default async function Image() {
   const logoSize = scaleImageSize(logoDimensions, 24);
 
   return new ImageResponse(
-    // ImageResponse JSX element
     (
+      // ImageResponse JSX element
       <div
         style={{
           display: 'flex',
@@ -236,23 +236,23 @@ export default async function Image() {
       fonts: [
         ...(commitMonoData
           ? [
-            {
-              name: 'CommitMono',
-              data: commitMonoData,
-              style: 'normal' as const,
-              weight: 400 as const,
-            },
-          ]
+              {
+                name: 'CommitMono',
+                data: commitMonoData,
+                style: 'normal' as const,
+                weight: 400 as const,
+              },
+            ]
           : []),
         ...(everettLightData
           ? [
-            {
-              name: 'Everett',
-              data: everettLightData,
-              style: 'normal' as const,
-              weight: 300 as const,
-            },
-          ]
+              {
+                name: 'Everett',
+                data: everettLightData,
+                style: 'normal' as const,
+                weight: 300 as const,
+              },
+            ]
           : []),
       ],
     }
